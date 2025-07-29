@@ -2,16 +2,18 @@ import requests
 import json
 import re
 
-# Variables
 page_size = 800
 page_number = 1
-referer_url = 'https://shop.lululemon.com/c/men-casual-clothes/n1oxc7zyk1r'
+referer_url = input("Enter referer URL: ").strip()
 match = re.search(r'/c/([^/]+)/([^/?#]+)', referer_url)
 if match:
     category = match.group(1)
     cdpHash = match.group(2)
 else:
     raise ValueError("Could not parse category and cdpHash from referer_url")
+
+print(f"✅ Category: {category}")
+print(f"✅ cdpHash: {cdpHash}")
 
 cookies = {
     'sat_track': 'true',
