@@ -55,4 +55,5 @@ product_ids = [p['productId'] for p in response.json()['data']['categoryPageData
 
 df = pd.DataFrame(product_ids, columns=['productId'])
 
-df.to_excel(f"{category}_product_ids.xlsx", index=False)
+df.to_csv(f"{category}_product_ids.csv", index=False)
+# df.to_excel(f"{category}_product_ids.xlsx", index=False)
