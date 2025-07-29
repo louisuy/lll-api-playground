@@ -1,7 +1,16 @@
 import requests
 import json
+import re
 
-product_code = input("Enter product code: ").strip()
+raw_input_code = input("Enter product code (e.g., prod00000000 or PROD00000000_LULU): ").strip()
+product_code = re.search(r'(prod\d+)', raw_input_code, re.IGNORECASE)
+
+if product_code:
+    product_code = product_code.group(1).lower()
+else:
+    raise ValueError("❌ Could not extract a valid product code.")
+
+print(f"✅ Normalized product code: {product_code}")
 
 cookies = {
     'sat_track': 'true',
