@@ -1,11 +1,17 @@
 import requests
 import json
+import re
 
 # Variables
-filename = "casual"
 page_size = 800
 page_number = 1
-referer_url = 'https://shop.lululemon.com/c/women-casual-clothes/n14uwkzyk1r'
+referer_url = 'https://shop.lululemon.com/c/men-casual-clothes/n1oxc7zyk1r'
+match = re.search(r'/c/([^/]+)/([^/?#]+)', referer_url)
+if match:
+    category = match.group(1)
+    cdpHash = match.group(2)
+else:
+    raise ValueError("Could not parse category and cdpHash from referer_url")
 
 cookies = {
     'sat_track': 'true',
@@ -72,8 +78,8 @@ json_data = {
         'abFlags': [
             'cdpSeodsEnabled',
         ],
-        'category': 'women-casual-clothes',
-        'cdpHash': 'n14uwkzyk1r',
+        'category': category,
+        'cdpHash': cdpHash,
         'forceMemberCheck': False,
         'fusionExperimentVariant': '',
         'locale': 'en_US',
@@ -91,8 +97,8 @@ response = requests.post('https://shop.lululemon.com/snb/graphql', cookies=cooki
 print(f"Status Code: {response.status_code}")
 
 # Save full JSON response
-with open(f"{filename}_response.json", 'w', encoding='utf-8') as f:
-    json.dump(response.json(), f, ensure_ascii=False, indent=2)
+# with open(f"{category}_response.json", 'w', encoding='utf-8') as f:
+#     json.dump(response.json(), f, ensure_ascii=False, indent=2)
 
 import pandas as pd
 
@@ -103,4 +109,4 @@ product_ids = [p['productId'] for p in response.json()['data']['categoryPageData
 df = pd.DataFrame(product_ids, columns=['productId'])
 
 # Save to Excel
-df.to_excel(f"{filename}_product_ids.xlsx", index=False)
+df.to_excel(f"{category}_product_ids.xlsx", index=False)
