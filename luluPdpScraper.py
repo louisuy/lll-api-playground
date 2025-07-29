@@ -71,8 +71,6 @@ json_data = {
           $category: String! = ""
           $unifiedId: String! = ""
           $locale: String
-          $fetchPcmMedia: Boolean!
-          $fetchVariants: Boolean!
         ) {
           productDetailPage(
             id: $id
@@ -95,10 +93,7 @@ json_data = {
         "id": product_code,
         "category": "",
         "unifiedId": "",
-        "locale": "en-us",
-        "fetchPcmMedia": False,
-        "fetchVariants": False,
-        "fetchHighlights": False
+        "locale": "en-us"
     }
 }
 
