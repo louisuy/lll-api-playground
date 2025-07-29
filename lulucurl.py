@@ -1,6 +1,12 @@
 import requests
 import json
 
+# Variables
+filename = "casual"
+page_size = 800
+page_number = 1
+referer_url = 'https://shop.lululemon.com/c/women-casual-clothes/n14uwkzyk1r'
+
 cookies = {
     'sat_track': 'true',
     'kameleoonVisitorCode': 'u5ptp1dixct1dznw',
@@ -43,7 +49,7 @@ headers = {
     'dnt': '1',
     'origin': 'https://shop.lululemon.com',
     'priority': 'u=1, i',
-    'referer': 'https://shop.lululemon.com/c/women-casual-clothes/n14uwkzyk1r',
+    'referer': referer_url,
     'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138"',
     'sec-ch-ua-mobile': '?0',
     'sec-ch-ua-platform': '"macOS"',
@@ -59,8 +65,8 @@ headers = {
 json_data = {
     'query': 'query CategoryPageDataQuery($category: String!, $cid: String, $forceMemberCheck: Boolean, $nValue: String, $cdpHash: String, $sl: String!, $locale: String!, $Ns: String, $storeId: String, $pageSize: Int, $page: Int, $onlyStore: Boolean, $useHighlights: Boolean, $abFlags: [String], $styleboost: [String], $fusionExperimentVariant: String) { categoryPageData(category: $category, nValue: $nValue, cdpHash: $cdpHash, locale: $locale, sl: $sl, Ns: $Ns, page: $page, pageSize: $pageSize, storeId: $storeId, onlyStore: $onlyStore, forceMemberCheck: $forceMemberCheck, cid: $cid, useHighlights: $useHighlights, abFlags: $abFlags, styleboost: $styleboost, fusionExperimentVariant: $fusionExperimentVariant) { products { productId } } }',
     'variables': {
-        'pageSize': 800,
-        'page': 1,
+        'pageSize': page_size,
+        'page': page_number,
         'useHighlights': True,
         'onlyStore': False,
         'abFlags': [
@@ -79,23 +85,22 @@ json_data = {
     },
 }
 
+# Make request
 response = requests.post('https://shop.lululemon.com/snb/graphql', cookies=cookies, headers=headers, json=json_data)
 
-# Print status for sanity check
 print(f"Status Code: {response.status_code}")
 
-# Save to JSON file
-with open('lululemon_response.json', 'w', encoding='utf-8') as f:
+# Save full JSON response
+with open(f"{filename}_response.json", 'w', encoding='utf-8') as f:
     json.dump(response.json(), f, ensure_ascii=False, indent=2)
 
+import pandas as pd
+
+# Extract product IDs
 product_ids = [p['productId'] for p in response.json()['data']['categoryPageData']['products']]
 
-# Save to a file
-with open('product_ids.json', 'w', encoding='utf-8') as f:
-    json.dump(product_ids, f, indent=2)
+# Convert to DataFrame
+df = pd.DataFrame(product_ids, columns=['productId'])
 
-
-# Note: json_data will not be serialized by requests
-# exactly as it was in the original request.
-#data = '{"query":"query CategoryPageDataQuery( $category: String! $cid: String $forceMemberCheck: Boolean $nValue: String $cdpHash: String $sl: String! $locale: String! $Ns: String $storeId: String $pageSize: Int $page: Int $onlyStore: Boolean $useHighlights: Boolean $abFlags: [String] $styleboost: [String] $fusionExperimentVariant: String ) { categoryPageData( category: $category nValue: $nValue cdpHash: $cdpHash locale: $locale sl: $sl Ns: $Ns page: $page pageSize: $pageSize storeId: $storeId onlyStore: $onlyStore forceMemberCheck: $forceMemberCheck cid: $cid useHighlights: $useHighlights abFlags: $abFlags styleboost: $styleboost fusionExperimentVariant: $fusionExperimentVariant ) { activeCategory allLocaleNvalues { CA US } categoryLabel fusionExperimentId fusionExperimentVariant fusionQueryId h1Title isBopisEnabled isFusionQuery isWMTM name results: totalProducts totalProductPages currentPage type redirectResponse { url statusCode } clearAction { label navigationState siteRootPath contentPath link } breadcrumbs { label navigationState contentPath } sortOptions { contentPath text: label value: link navigationState selected className } facet { configurableNavigation { name type linkText url } dimensionName enableVisualColorStyling enableVisualSizeStyling multiSelect name noFollow noFollowBool primaryNumRefinements refinements { count colorGroup contentPath label description trademarkLabel navigationState removeAction { navigationState } isSelected: selected sizeGroup updatedSizeGroupForABTest } selectedCount showMoreRefinementsLink type } refinementCrumbs { ancestors { label properties { unifiedId } } categoryLabel count dimensionName displayName label properties { canonicalUrl headData longDescription noFollow noIndex title } removeAction { navigationState contentPath } } products { allAvailableSizes currencyCode defaultSku displayName intendedCupSize listPrice parentCategoryUnifiedId productOnSale: onSale productSalePrice: salePrice pdpUrl productCoverage repositoryId: productId productId inStore unifiedId highlights { highlightLabel highlightIconWeb priority visibility subText abFlag { abFlagName showIcon showHighlight showSubText visibility } } skuStyleOrder { colorGroup colorId colorName inStore size sku skuStyleOrderId styleId01 styleId02 styleId images } swatches { primaryImage hoverImage url colorId inStore } } bopisProducts { allAvailableSizes currencyCode defaultSku displayName listPrice parentCategoryUnifiedId productOnSale: onSale productSalePrice: salePrice pdpUrl productCoverage repositoryId: productId productId inStore unifiedId highlights { highlightLabel highlightIconWeb priority visibility subText abFlag { abFlagName showIcon showHighlight showSubText visibility } } skuStyleOrder { colorGroup colorId colorName inStore size sku skuStyleOrderId styleId01 styleId02 styleId } swatches { primaryImage hoverImage url colorId inStore } } storeInfo { totalInStoreProducts totalInStoreProductPages storeId } seoLinks { next prev self } } }","variables":{"pageSize":12,"page":2,"useHighlights":true,"onlyStore":false,"abFlags":["cdpSeodsEnabled"],"category":"women-casual-clothes","cdpHash":"n14uwkzyk1r","forceMemberCheck":false,"fusionExperimentVariant":"","locale":"en_US","Ns":"","nValue":null,"sl":"US","storeId":null,"styleboost":[]}}'
-#response = requests.post('https://shop.lululemon.com/snb/graphql', cookies=cookies, headers=headers, data=data)
+# Save to Excel
+df.to_excel(f"{filename}_product_ids.xlsx", index=False)
