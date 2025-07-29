@@ -1,6 +1,8 @@
 import requests
 import json
 
+product_code = input("Enter product code: ").strip()
+
 cookies = {
     'sat_track': 'true',
     'kameleoonVisitorCode': 'u5ptp1dixct1dznw',
@@ -46,7 +48,7 @@ headers = {
     'dnt': '1',
     'origin': 'https://shop.lululemon.com',
     'priority': 'u=1, i',
-    'referer': 'https://shop.lululemon.com/c/women-shop-outfits/n16o10zof9k',
+    'referer': 'https://shop.lululemon.com',
     'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138"',
     'sec-ch-ua-mobile': '?0',
     'sec-ch-ua-platform': '"macOS"',
@@ -65,7 +67,7 @@ headers = {
 json_data = {
     'query': 'query GetPdpDataById( $id: String! $category: String! = "" $unifiedId: String! = "" $locale: String $fetchPcmMedia: Boolean! $fetchVariants: Boolean! ) { productDetailPage( id: $id category: $category unifiedId: $unifiedId locale: $locale ) { allInseam { productId productUrl inseam } allLocalePids { CA US siteId pdpUrl categoryUnifiedId productUnifiedId } allSize { size available } category { id name } colorDriver { color sizes } colorAttributes { colorId styleColorId wwmt fabricPill colorGroups designedFor { activityText iconId } careAndContent { iconId title sections { media title attributes { badgeId badgeText iconId list { items title } text } } } fabricOrBenefits { iconId title sections { media { captionText imageAlt videoSrcPortrait videoPosterSrc videoPosterSrcPortrait imageSrc videoSrc } title attributes { iconId list text attributeType } } } fitOrIngredients { id iconId title sections { media { captionText imageAlt videoSrcPortrait videoPosterSrc videoPosterSrcPortrait imageSrc videoSrc } title attributes { iconId list text attributeType } } } fitOrHowToUse { id iconId title sections { media { captionText imageAlt videoSrcPortrait videoPosterSrc videoPosterSrcPortrait imageSrc videoSrc } title attributes { iconId list text attributeType } } } featuresOrIngredients { id iconId title sections { media { captionText imageAlt videoSrcPortrait videoPosterSrc videoPosterSrcPortrait imageSrc videoSrc } title attributes { iconId list text attributeType } } } } colors { code name swatchUrl slug simpleRanking ituBt709 ituBt601 colorHarmonyRank } highlights { highlightIconWeb highlightLabel visibility subText abFlag { name abFlagName showIcon showSubText showHighlight visibility } } pcmProductStyleInfo @include(if: $fetchPcmMedia) { departmentId divisionId } pcmProductVideoInfo { type url posterImageUrl } productAttributes { productContentCare { colorId heroBannerHotSpotText care { careId careDescription iconImgUrl } } productContentFeature { f5ContentAlignmentPDP styleId f5Features { featureName featureDescription } } productContentFabric { fabricDescription fabricDisplayName fabricId fabricPurposes } productContentWhyWeMadeThis } productCarousel { color { code name swatchUrl slug simpleRanking ituBt709 ituBt601 colorHarmonyRank } modelInfo { description modelIsWearing { productName numberOfAvailableColors url imageURL onSale listPrice salePrice } shopThisLook } imageInfo inseam mediaInfo { type url posterImageUrl } pcmMediaInfo @include(if: $fetchPcmMedia) { type url posterImageUrl } } productSummary { productId displayName unifiedId parentCategoryUnifiedId pdpUrl pdpUrlWithRegion productUrl shareUrl whyWeMadeThis isFinalSale isSoldOut isLoyaltyProduct isHazmatProduct divisionId featuredFabric fitDetails departmentId activity allAncestorsDisplayName allAncestorsRepositoryId allAvailableSizes bazaarVoiceID collections colorGroup colour commonId currencyCode defaultParentCategory defaultSku display displayCA displayNameWithBr f5BckimgUrl freeReturnShipping gender genderCategoryTitle genderCategoryProductTitle hasLinkedProducts imageScheme isDisplayable isProductLocaleMatch itemType linkedProducts listPrice locale loyaltyTermsAndConditions { url text } onSale parentCategoryDisplayName parentCategoryKeywords price priceRange productActivityIdRepositoryId productApplicableSystems productBaseUrl productCatalogId productCategory productDefaultSort productDisallowAsRecommendation productHasOutfitProduct productLanguage productLastSkuAdditionDateTime productMarkDown productName productNoFollow productNoIndex productNumberOfImageAssets productOnSale productSiteMapPdpUrl productSizes productWhatsNew skuSkuImages skuStyleOrder title trendingColorsAll type } productVariants { attributeType colorCode description fabric fit imageUrl label name path productId type value } refinementCrumbs { displayName dimensionName label multiSelect properties { navigationState nValue } ancestors { label navigationState properties { navigationState nValue } } } sizeDriver { size colors } sizeGuide { url category } skus { id skuUrl price { listPrice currency { code symbol } onSale salePrice earlyAccessMarkdownPrice } size color { code name swatchUrl slug simpleRanking ituBt709 ituBt601 colorHarmonyRank } available inseam styleId styleNumber } tier variants @include(if: $fetchVariants) { color { code name swatchUrl slug simpleRanking ituBt709 ituBt601 colorHarmonyRank } skus { id skuUrl price { listPrice currency { code symbol } onSale salePrice earlyAccessMarkdownPrice } size color { code name swatchUrl slug simpleRanking ituBt709 ituBt601 colorHarmonyRank } available inseam styleId styleNumber } imageSet { images { url alt } modelDescription } } whyWeMadeThisAttributes { text image } } }',
     'variables': {
-        'id': 'prod20002287',
+        'id': product_code,
         'category': '',
         'unifiedId': '',
         'locale': 'en-us',
@@ -76,6 +78,8 @@ json_data = {
 }
 
 response = requests.post('https://shop.lululemon.com/cne/graphql', cookies=cookies, headers=headers, json=json_data)
+
+print(f"Status Code: {response.status_code}")
 
 with open(f"pdp_response.json", "w", encoding="utf-8") as f:
     json.dump(response.json(), f, ensure_ascii=False, indent=2)
