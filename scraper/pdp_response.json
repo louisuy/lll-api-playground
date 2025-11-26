@@ -1,0 +1,28 @@
+{
+  "data": {
+    "productDetailPage": {
+      "productSummary": {
+        "productId": "prod20005443",
+        "displayName": "Unisex Power Stride Crew Socks 3 Pack *Updated",
+        "parentCategoryUnifiedId": "men-socks",
+        "activity": [
+          "Running",
+          "Training",
+          "Workout"
+        ],
+        "gender": [
+          "Men",
+          "Women"
+        ],
+        "productCategory": [
+          "We Made Too Much",
+          "women",
+          "Early Access",
+          "men",
+          "Accessories",
+          "Socks"
+        ]
+      }
+    }
+  }
+}
